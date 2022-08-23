@@ -9,6 +9,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.br.danilo.console.models.Cliente;
+import com.br.danilo.console.models.Pedido;
+import com.br.danilo.console.models.Produto;
+
 @SpringBootApplication
 public class LogicaApplication {
 	
@@ -23,16 +27,13 @@ public class LogicaApplication {
 		TimeUnit.SECONDS.sleep(segundos);
 	}
 
+	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     
-	private static List<String> produtos = new ArrayList<>();
-	private static List<List<String>> pedidos = new ArrayList<>();
-	// private static List<String> clientes = new ArrayList<>();
+	private static List<Produto> produtos = new ArrayList<>();
+	private static List<Pedido> pedidos = new ArrayList<>();
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		System.out.println("==== [ Olá João segue o program para resolver os seus problemas :) ] =====");
-
-		BufferedReader reader = new BufferedReader(
-            new InputStreamReader(System.in));
 
 		while(true){
 
@@ -49,29 +50,39 @@ public class LogicaApplication {
 			boolean sair = false;
 			switch(opcao){
 				case 1:
+					var produto = new Produto();
+
 					System.out.println("Digite o nome do produto");
-					String nome = reader.readLine();
-					produtos.add(nome);
+					produto.setNome(reader.readLine());
+
+					System.out.println("Digite a descrição do produto");
+					produto.setDescricao(reader.readLine());
+
+					produtos.add(produto);
 					clearConsole();
 					System.out.println("Produto cadastrado com sucesso");
 					espera(2);
 					clearConsole();
 					break;
 				case 2:
-					System.out.println("Selecione um produto da lista");
-					for (int i = 0; i< produtos.size(); i++ ) {
-						System.out.println((i+1) + " - " + produtos.get(i));
-					}
-					int idProduto = Integer.parseInt(reader.readLine());
+					var pedido = new Pedido();
 
-					var clientePedido = new ArrayList<String>();
-					clientePedido.add(produtos.get(idProduto-1));
-
+					var cliente = new Cliente();
 					System.out.println("Digite o nome do cliente");
-					String nomeCliente = reader.readLine();
-					clientePedido.add(nomeCliente);
+					cliente.setNome(reader.readLine());
 
-					pedidos.add(clientePedido);
+					System.out.println("Digite o email do cliente");
+					cliente.setEmail(reader.readLine());
+
+					pedido.setCliente(cliente);
+
+					clearConsole();
+
+					var produtosAPreencher = new ArrayList<Produto>();
+					var produtosDoPedido = getProdutosDoPedido(produtosAPreencher);
+
+					pedido.setProdutos(produtosDoPedido);
+					pedidos.add(pedido);
 
 					clearConsole();
 					System.out.println("Produto cadastrado com sucesso");
@@ -80,9 +91,18 @@ public class LogicaApplication {
 					break;
 				case 3:
 					System.out.println("=== Relatório de pedidos ===");
-					for (List<String> clientePed: pedidos) {
-						System.out.println("Produto: " + clientePed.get(0));
-						System.out.println("Cliente: " + clientePed.get(1));
+					for (Pedido ped : pedidos) {
+						System.out.println("Cliente: " + ped.getCliente().getNome());
+						System.out.println("Email: " + ped.getCliente().getEmail());
+						System.out.println("--------[ Produtos ]--------");
+						for (Produto prod : ped.getProdutos()) {
+							System.out.println("Nome: " + prod.getNome());
+							System.out.println("Descrição: " + prod.getDescricao());
+							System.out.println("Valor unidade: " + prod.getValor());
+						}
+						System.out.println("----------------");
+						System.out.println("Valor total: " + ped.valorTotal());
+						System.out.println("----------------");
 					}
 
 					espera(4);
@@ -102,6 +122,37 @@ public class LogicaApplication {
  
 
 		//SpringApplication.run(LogicaApplication.class, args);
+	}
+
+	private static List<Produto> getProdutosDoPedido(ArrayList<Produto> produtos) throws NumberFormatException, IOException, InterruptedException {
+		
+		System.out.println("Selecione um produto da lista");
+		for (int i = 0; i< produtos.size(); i++ ) {
+			System.out.println((i+1) + " - " + produtos.get(i).getNome());
+		}
+		int idProduto = Integer.parseInt(reader.readLine());
+		try{
+			var produtoSelecionado = produtos.get(idProduto-1);
+			produtos.add(produtoSelecionado);
+		}
+		catch(Exception e){
+			getProdutosDoPedido(produtos);
+		}
+
+		clearConsole();
+		System.out.println("produto adicionado com sucesso");
+		espera(1);
+		
+		System.out.println("Para adicionar mais produtos, digite");
+		System.out.println("1 - Para adicionar mais");
+		System.out.println("2 - Para fechar o pedido");
+		int opcao = Integer.parseInt(reader.readLine());
+
+		if(opcao == 1){
+			getProdutosDoPedido(produtos);
+		}
+
+		return produtos;
 	}
 
 }
