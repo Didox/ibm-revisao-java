@@ -58,6 +58,9 @@ public class LogicaApplication {
 					System.out.println("Digite a descrição do produto");
 					produto.setDescricao(reader.readLine());
 
+					System.out.println("Digite o valor do produto");
+					produto.setValor(Float.parseFloat(reader.readLine()));
+
 					produtos.add(produto);
 					clearConsole();
 					System.out.println("Produto cadastrado com sucesso");
