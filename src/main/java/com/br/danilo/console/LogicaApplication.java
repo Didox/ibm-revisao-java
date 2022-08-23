@@ -33,10 +33,10 @@ public class LogicaApplication {
 	private static List<Pedido> pedidos = new ArrayList<>();
 
 	public static void main(String[] args) throws IOException, InterruptedException {
+		clearConsole();
 		System.out.println("==== [ Olá João segue o program para resolver os seus problemas :) ] =====");
 
 		while(true){
-
 			System.out.println("=== O que você deseja fazer ?  ===");
 			System.out.println("1 - Cadastrar produtos");
 			System.out.println("2 - Cadastrar pedidos");
@@ -88,7 +88,7 @@ public class LogicaApplication {
 					pedidos.add(pedido);
 
 					clearConsole();
-					System.out.println("Produto cadastrado com sucesso");
+					System.out.println("Pedido cadastrado com sucesso");
 					espera(2);
 					clearConsole();
 					break;
@@ -102,8 +102,8 @@ public class LogicaApplication {
 							System.out.println("Nome: " + prod.getNome());
 							System.out.println("Descrição: " + prod.getDescricao());
 							System.out.println("Valor unidade: " + prod.getValor());
+							System.out.println("----------------");
 						}
-						System.out.println("----------------");
 						System.out.println("Valor total: " + ped.valorTotal());
 						System.out.println("----------------");
 					}
@@ -127,7 +127,7 @@ public class LogicaApplication {
 		//SpringApplication.run(LogicaApplication.class, args);
 	}
 
-	private static List<Produto> getProdutosDoPedido(ArrayList<Produto> produtos) throws NumberFormatException, IOException, InterruptedException {
+	private static List<Produto> getProdutosDoPedido(ArrayList<Produto> produtosAPreencher) throws NumberFormatException, IOException, InterruptedException {
 		
 		System.out.println("Selecione um produto da lista");
 		for (int i = 0; i< produtos.size(); i++ ) {
@@ -136,10 +136,10 @@ public class LogicaApplication {
 		int idProduto = Integer.parseInt(reader.readLine());
 		try{
 			var produtoSelecionado = produtos.get(idProduto-1);
-			produtos.add(produtoSelecionado);
+			produtosAPreencher.add(produtoSelecionado);
 		}
 		catch(Exception e){
-			getProdutosDoPedido(produtos);
+			getProdutosDoPedido(produtosAPreencher);
 		}
 
 		clearConsole();
@@ -152,7 +152,7 @@ public class LogicaApplication {
 		int opcao = Integer.parseInt(reader.readLine());
 
 		if(opcao == 1){
-			getProdutosDoPedido(produtos);
+			getProdutosDoPedido(produtosAPreencher);
 		}
 
 		return produtos;
