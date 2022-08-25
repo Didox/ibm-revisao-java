@@ -4,158 +4,135 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.br.danilo.console.models.Cliente;
-import com.br.danilo.console.models.Pedido;
-import com.br.danilo.console.models.Produto;
+import com.br.danilo.console.models.Aluno;
 
 @SpringBootApplication
 public class LogicaApplication {
-	
-	public final static void clearConsole()
-	{
-		System.out.print("\033[H\033[2J");  
-		System.out.flush(); 
-	}
-
-	public final static void espera(int segundos) throws InterruptedException
-	{
-		TimeUnit.SECONDS.sleep(segundos);
-	}
 
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    
-	private static List<Produto> produtos = new ArrayList<>();
-	private static List<Pedido> pedidos = new ArrayList<>();
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-		clearConsole();
-		System.out.println("==== [ Olá João segue o program para resolver os seus problemas :) ] =====");
-
+	public static void main(String[] args) throws IOException, NumberFormatException, InterruptedException {
 		while(true){
-			System.out.println("=== O que você deseja fazer ?  ===");
-			System.out.println("1 - Cadastrar produtos");
-			System.out.println("2 - Cadastrar pedidos");
-			System.out.println("3 - Mostrar relatório");
-			System.out.println("4 - Sair");
+			limparTela();
+			
+			System.out.println("===== [ Cadastro dos alunos ] =======");
+			System.out.println("Qual opção você deseja?");
+			System.out.println("1 - Cadastrar aluno");
+			System.out.println("2 - Mostrar relatório");
+			System.out.println("3 - sair");
 
-			int opcao = Integer.parseInt(reader.readLine());
+			int opcao = 0;
 
-			clearConsole();
+			try{
+				opcao = Integer.parseInt(reader.readLine());
+			}
+			catch(Exception e) {}
 
-			boolean sair = false;
+			limparTela();
+
+			var sair = false;
 			switch(opcao){
 				case 1:
-					var produto = new Produto();
-
-					System.out.println("Digite o nome do produto");
-					produto.setNome(reader.readLine());
-
-					System.out.println("Digite a descrição do produto");
-					produto.setDescricao(reader.readLine());
-
-					System.out.println("Digite o valor do produto");
-					produto.setValor(Float.parseFloat(reader.readLine()));
-
-					produtos.add(produto);
-					clearConsole();
-					System.out.println("Produto cadastrado com sucesso");
-					espera(2);
-					clearConsole();
+					cadastroAluno();
 					break;
 				case 2:
-					var pedido = new Pedido();
-
-					var cliente = new Cliente();
-					System.out.println("Digite o nome do cliente");
-					cliente.setNome(reader.readLine());
-
-					System.out.println("Digite o email do cliente");
-					cliente.setEmail(reader.readLine());
-
-					pedido.setCliente(cliente);
-
-					clearConsole();
-
-					var produtosAPreencher = new ArrayList<Produto>();
-					var produtosDoPedido = getProdutosDoPedido(produtosAPreencher);
-
-					pedido.setProdutos(produtosDoPedido);
-					pedidos.add(pedido);
-
-					clearConsole();
-					System.out.println("Pedido cadastrado com sucesso");
-					espera(2);
-					clearConsole();
+					mostrarAlunos();
 					break;
 				case 3:
-					System.out.println("=== Relatório de pedidos ===");
-					for (Pedido ped : pedidos) {
-						System.out.println("Cliente: " + ped.getCliente().getNome());
-						System.out.println("Email: " + ped.getCliente().getEmail());
-						System.out.println("--------[ Produtos ]--------");
-						for (Produto prod : ped.getProdutos()) {
-							System.out.println("Nome: " + prod.getNome());
-							System.out.println("Descrição: " + prod.getDescricao());
-							System.out.println("Valor unidade: " + prod.getValor());
-							System.out.println("----------------");
-						}
-						System.out.println("Valor total: " + ped.valorTotal());
-						System.out.println("----------------");
-					}
-
-					espera(4);
-					clearConsole();
-					break;
-				case 4:
 					sair = true;
+					break;
+				default:
+					opcaoInvalida();
 					break;
 			}
 
 			if(sair) break;
-			
 		}
-
-
- 
- 
-
+		
+		
 		//SpringApplication.run(LogicaApplication.class, args);
 	}
 
-	private static List<Produto> getProdutosDoPedido(ArrayList<Produto> produtosAPreencher) throws NumberFormatException, IOException, InterruptedException {
-		
-		System.out.println("Selecione um produto da lista");
-		for (int i = 0; i< produtos.size(); i++ ) {
-			System.out.println((i+1) + " - " + produtos.get(i).getNome());
-		}
-		int idProduto = Integer.parseInt(reader.readLine());
+	private static void limparTela() {
+		System.out.print("\033[H\033[2J");  
+    	System.out.flush();  
+	}
+
+	private static void opcaoInvalida() throws IOException, NumberFormatException, InterruptedException {
+		mensagem("Opção inválida");
+	}
+
+	private static void capturaNotasAluno(Aluno aluno) throws NumberFormatException, IOException, InterruptedException {
+		System.out.println("Digite a nota do(a) " + aluno.getNome());
+		if(aluno.getNotas() == null) aluno.setNotas(new ArrayList<Float>());
+
 		try{
-			var produtoSelecionado = produtos.get(idProduto-1);
-			produtosAPreencher.add(produtoSelecionado);
+			aluno.getNotas().add(Float.parseFloat(reader.readLine()));
 		}
 		catch(Exception e){
-			getProdutosDoPedido(produtosAPreencher);
+			mensagem("Nota inválida");
+			capturaNotasAluno(aluno);
 		}
 
-		clearConsole();
-		System.out.println("produto adicionado com sucesso");
-		espera(1);
-		
-		System.out.println("Para adicionar mais produtos, digite");
-		System.out.println("1 - Para adicionar mais");
-		System.out.println("2 - Para fechar o pedido");
-		int opcao = Integer.parseInt(reader.readLine());
+		try{
+			System.out.println("Digite 1 para cadastrar mais notas ou 0 para finalizar o cadaastro");
+			int opcao = Integer.parseInt(reader.readLine());
+			if(opcao == 1) capturaNotasAluno(aluno);
+			return;
+		}
+		catch(Exception e) {
+			mensagem("Opção inválida, iniciando novo cadastro de nota");
+			capturaNotasAluno(aluno);
+		}
+	}
 
-		if(opcao == 1){
-			getProdutosDoPedido(produtosAPreencher);
+	private static void mensagem(String string) throws InterruptedException {
+		limparTela();
+		System.out.println(string);
+		espera(2);
+		limparTela();
+	}
+
+	private static void espera(int secconds) throws InterruptedException {
+		Thread.sleep(secconds*1000); 
+	}
+
+	private static void mostrarAlunos() throws InterruptedException {
+		if(Aluno.all().size() == 0){
+			mensagem("Nenhum aluno cadastrado");
+			return;
 		}
 
-		return produtos;
+		System.out.println("======== [ Relatório de alunos ] ========");
+		for (Aluno aluno : Aluno.all()) {
+			System.out.println("Nome: "+ aluno.getNome());
+			String notas = "";
+			for (float nota : aluno.getNotas()) {
+				notas += nota + ", ";
+			}
+			System.out.println("Notas: " + notas);
+			System.out.println("Média: " + aluno.media());
+			System.out.println("Situação: " + aluno.situacao());
+			System.out.println("-------------------------------");
+		}
+
+		espera(8);
+		limparTela();
+	}
+
+	private static void cadastroAluno() throws NumberFormatException, IOException, InterruptedException {
+		var aluno  = new Aluno();
+		System.out.println("Digite o nome do aluno");
+		aluno.setNome(reader.readLine());
+
+		capturaNotasAluno(aluno);
+
+		aluno.savar();
+
+		mensagem("Aluno cadastrado com sucesso!");
 	}
 
 }

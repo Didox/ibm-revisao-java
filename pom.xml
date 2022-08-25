@@ -12,7 +12,7 @@
 	<artifactId>console</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>logica</name>
-	<description>Um projeto para trabalhar com lógica e orientação a objetos</description>
+	<description>Um projeto para revisão de lógica com turma2 IBM</description>
 	<properties>
 		<java.version>18</java.version>
 	</properties>
@@ -27,6 +27,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>     
+			<groupId>com.google.code.gson</groupId>     
+			<artifactId>gson</artifactId>     
+			<version>2.9.0</version>     
+		</dependency>    
 	</dependencies>
 
 	<build>
