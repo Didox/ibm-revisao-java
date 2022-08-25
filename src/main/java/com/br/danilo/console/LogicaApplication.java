@@ -130,7 +130,7 @@ public class LogicaApplication {
 
 		capturaNotasAluno(aluno);
 
-		aluno.savar();
+		aluno.salvar();
 
 		mensagem("Aluno cadastrado com sucesso!");
 	}
