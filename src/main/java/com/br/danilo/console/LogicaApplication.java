@@ -7,7 +7,12 @@ import java.util.ArrayList;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.br.danilo.console.interfaces.IEntidade;
 import com.br.danilo.console.models.Aluno;
+import com.br.danilo.console.models.Escola;
+import com.br.danilo.console.models.Professor;
+import com.br.danilo.console.servicos.PersistenciaCSV;
+import com.br.danilo.console.servicos.PersistenciaJson;
 
 @SpringBootApplication
 public class LogicaApplication {
@@ -15,6 +20,25 @@ public class LogicaApplication {
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 	public static void main(String[] args) throws IOException, NumberFormatException, InterruptedException {
+		
+		var professor = new Professor();
+		professor.setNome("Danilo");
+		professor.salvar(new PersistenciaJson(professor));
+
+
+		var professor2 = new Professor();
+		professor2.setNome("Danilo");
+		professor2.salvar(new PersistenciaCSV(professor));
+
+		var escola = new Escola();
+		escola.setNome("Gama Academy");
+		escola.setEndereco("Rua de test");
+		escola.setCidade("São Paulo");
+		escola.setNumero(1243);
+		escola.setEstado("SP");
+		new PersistenciaJson(escola).salvar(escola);
+		
+
 		while(true){
 			limparTela();
 			
@@ -101,13 +125,15 @@ public class LogicaApplication {
 	}
 
 	private static void mostrarAlunos() throws InterruptedException {
-		if(Aluno.all().size() == 0){
+		var alunos = Aluno.all(new PersistenciaJson(new Aluno()));
+		if(alunos.size() == 0){
 			mensagem("Nenhum aluno cadastrado");
 			return;
 		}
 
 		System.out.println("======== [ Relatório de alunos ] ========");
-		for (Aluno aluno : Aluno.all()) {
+		for (IEntidade entidade : alunos) {
+			var aluno = ((Aluno)entidade);
 			System.out.println("Nome: "+ aluno.getNome());
 			String notas = "";
 			for (float nota : aluno.getNotas()) {
@@ -130,7 +156,7 @@ public class LogicaApplication {
 
 		capturaNotasAluno(aluno);
 
-		aluno.salvar();
+		aluno.salvar(new PersistenciaJson(aluno));
 
 		mensagem("Aluno cadastrado com sucesso!");
 	}
