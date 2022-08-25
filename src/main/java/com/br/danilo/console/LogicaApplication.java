@@ -130,7 +130,7 @@ public class LogicaApplication {
 			mensagem("Nenhum aluno cadastrado");
 			return;
 		}
-
+ 
 		System.out.println("======== [ Relatório de alunos ] ========");
 		for (IEntidade entidade : alunos) {
 			var aluno = ((Aluno)entidade);
