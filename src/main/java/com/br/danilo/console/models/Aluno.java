@@ -50,7 +50,7 @@ public class Aluno {
 
         return mediaCalculada;
     }
-    public void savar() {
+    public void salvar() {
 		Aluno.alunos.add(this);
         try {
             FileWriter myWriter = new FileWriter("alunos.json");
